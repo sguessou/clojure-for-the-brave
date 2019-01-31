@@ -67,3 +67,14 @@
         (recur remaining
                (into final-body-parts
                      (set [part (matching-part part)])))))))
+
+
+;; Multi-arity recurive function example
+(defn recursive-printer
+  ([]
+   (recursive-printer 0))
+  ([iteration]
+   (println iteration)
+   (if (> iteration 3)
+     (println "Goodbye!")
+     (recursive-printer (inc iteration)))))
