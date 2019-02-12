@@ -78,3 +78,63 @@
    (if (> iteration 3)
      (println "Goodbye!")
      (recursive-printer (inc iteration)))))
+
+;; My reducer
+(defn my-reduce
+  ([f initial coll]
+   (loop [result initial
+          remaining coll]
+     (if (empty? remaining)
+       result
+       (recur (f result (first remaining)) (rest remaining)))))
+  ([f [head & tail]]
+   (my-reduce f head tail)))
+
+;; Reimplementation of the symmetrizer with reduce:
+(defn better-symmetrize-body-parts
+  "Expects a seq of maps that have a :name and :size"
+  [asym-body-parts]
+  (reduce (fn [final-body-parts part]
+            (into final-body-parts (set [part (matching-part part)])))
+          []
+          asym-body-parts))
+
+(defn hit
+  [asym-body-parts]
+  (let [sym-parts (better-symmetrize-body-parts asym-body-parts)
+        body-part-size-sum (reduce + (map :size sym-parts))
+        target (rand body-part-size-sum)]
+    (loop [[part & remaining] sym-parts
+           accumulated-size (:size part)]
+      (if (> accumulated-size target)
+        [(:name part) (:size part) accumulated-size target] 
+        (recur remaining (+ accumulated-size (:size (first remaining))))))))
+
+;; Ex. 5
+;; Create a function that's similar to symmetrize-body-parts except that it has to work with weird space aliens with radial symmetry.
+;; Instead of two eyes, arms, legs, and so on, they have five.
+(defn make-five-parts
+  [part]
+  (loop [iteration 0
+         result []]
+         (if (>= iteration 5)
+           result
+          (recur (inc iteration)
+                 (into result
+                   (set [{:name (clojure.string/replace (:name part) #"^left-" (str (inc iteration) "-"))
+                          :size (:size part)}]))))))
+
+(defn radial-matching-part
+    [part]
+    (let [name (:name part)] 
+         (if (.contains name "left")
+           (make-five-parts part)
+           part)))
+
+ (defn radial-symmetrize-body-parts
+    [asym-body-parts]
+    (reduce (fn [final-body-parts part]
+              (into final-body-parts (set [part (radial-matching-part part)])))
+            []
+            asym-body-parts))
+
