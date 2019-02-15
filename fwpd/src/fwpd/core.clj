@@ -36,3 +36,10 @@
   [minimum-glitter records]
   (filter #(>= (:glitter-index %) minimum-glitter) records))
 
+;; Exercise 1
+;; Turn the result of your glitter filter into a list of names
+(defn glitter-filter
+  [minimum-glitter records]
+  (map :name (filter #(>= (:glitter-index %) minimum-glitter) records)))
+
+(glitter-filter 3 (mapify (parse (slurp filename))))
