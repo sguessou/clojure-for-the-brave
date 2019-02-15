@@ -14,4 +14,12 @@
 
 (map vampire-related-details '(0 1 2 3))
 
+(concat (take 8 (repeat "na")) ["Batman!"])
 
+(take 10 (repeatedly (fn [] (rand-int 10))))
+
+(defn even-numbers
+  ([] (even-numbers 0))
+  ([n] (cons n (lazy-seq (even-numbers (+ n 2))))))
+
+(take 10 (even-numbers))
