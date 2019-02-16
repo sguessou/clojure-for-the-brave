@@ -43,3 +43,13 @@
   (map :name (filter #(>= (:glitter-index %) minimum-glitter) records)))
 
 (glitter-filter 3 (mapify (parse (slurp filename))))
+
+;; Exercise 2
+;; Write a function, append, which will append a new suspect to your list of suspects.
+(defn append
+  [line]
+  (spit filename (str line "\n") :append true)) 
+
+(append "Bella Swan,0")  
+
+(slurp filename)
