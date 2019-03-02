@@ -113,28 +113,28 @@
 ;; Ex. 5
 ;; Create a function that's similar to symmetrize-body-parts except that it has to work with weird space aliens with radial symmetry.
 ;; Instead of two eyes, arms, legs, and so on, they have five.
-(defn make-five-parts
+(defn matching-part-radial
   [part]
-  (loop [iteration 0
-         result []]
-         (if (>= iteration 5)
-           result
-          (recur (inc iteration)
-                 (into result
-                   (set [{:name (clojure.string/replace (:name part) #"^left-" (str (inc iteration) "-"))
-                          :size (:size part)}]))))))
+  (if (.contains (:name part) "left-")
+    [{:name (clojure.string/replace (:name part) #"^left-" "right-")
+      :size (:size part)}
+     {:name (clojure.string/replace (:name part) #"^left-" "upper-")
+      :size (:size part)}
+     {:name (clojure.string/replace (:name part) #"^left-" "lower-")
+      :size (:size part)}
+     {:name (clojure.string/replace (:name part) #"^left-" "center-")
+      :size (:size part)}
+     part]
+    [part]))
 
-(defn radial-matching-part
-    [part]
-    (let [name (:name part)] 
-         (if (.contains name "left")
-           (make-five-parts part)
-           part)))
-
- (defn radial-symmetrize-body-parts
-    [asym-body-parts]
-    (reduce (fn [final-body-parts part]
-              (into final-body-parts (set [part (radial-matching-part part)])))
-            []
-            asym-body-parts))
-
+(defn symmetrize-body-parts-radial
+  "Expects a seq of maps that have a :name and :size"
+  [asym-body-parts]
+  (loop [remaining-asym-parts asym-body-parts
+         final-body-parts []]
+    (if (empty? remaining-asym-parts)
+      final-body-parts
+      (let [[part & remaining] remaining-asym-parts]
+        (recur remaining
+               (into final-body-parts
+                     (matching-part-radial part)))))))
