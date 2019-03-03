@@ -116,20 +116,21 @@
 (defn matching-part-radial
   [part]
   (if (.contains (:name part) "left-")
-    [{:name (clojure.string/replace (:name part) #"^left-" "right-")
+    [{:name (clojure.string/replace (:name part) #"^left-" "1-")
       :size (:size part)}
-     {:name (clojure.string/replace (:name part) #"^left-" "upper-")
+     {:name (clojure.string/replace (:name part) #"^left-" "2-")
       :size (:size part)}
-     {:name (clojure.string/replace (:name part) #"^left-" "lower-")
+     {:name (clojure.string/replace (:name part) #"^left-" "3-")
       :size (:size part)}
-     {:name (clojure.string/replace (:name part) #"^left-" "center-")
+     {:name (clojure.string/replace (:name part) #"^left-" "4-")
       :size (:size part)}
-     part]
+     {:name (clojure.string/replace (:name part) #"^left-" "5-")
+      :size (:size part)}]
     [part]))
 
 (defn symmetrize-body-parts-radial
   "Expects a seq of maps that have a :name and :size"
-  [asym-body-parts]
+  [asym-body-parts num]
   (loop [remaining-asym-parts asym-body-parts
          final-body-parts []]
     (if (empty? remaining-asym-parts)
@@ -137,4 +138,20 @@
       (let [[part & remaining] remaining-asym-parts]
         (recur remaining
                (into final-body-parts
-                     (matching-part-radial part)))))))
+                     (matching-part-radial part num)))))))
+
+;; Exercise 6
+;; Create a function that generalizes symmetrize-body-parts and the function you created in exercise 5.
+;; The new function should take a collection of body parts and the number of matching body parts to add.
+(defn matching-part-radial
+  [part num]
+  (if (.contains (:name part) "left-")
+    (loop [cnt num
+           buff []]
+      (if (zero? cnt)
+        buff
+        (recur (dec cnt)
+               (concat  buff  [{:name (clojure.string/replace (:name part) #"^left-" (str cnt "-"))
+                                :size (:size part)}]))))
+    [part]))
+
